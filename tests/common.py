@@ -586,7 +586,6 @@ class MockEntityPlatform(entity_platform.EntityPlatform):
         platform=None,
         scan_interval=timedelta(seconds=15),
         entity_namespace=None,
-        async_entities_added_callback=lambda: None,
     ):
         """Initialize a mock entity platform."""
         if logger is None:
@@ -604,7 +603,6 @@ class MockEntityPlatform(entity_platform.EntityPlatform):
             platform=platform,
             scan_interval=scan_interval,
             entity_namespace=entity_namespace,
-            async_entities_added_callback=async_entities_added_callback,
         )
 
 
