@@ -14,6 +14,16 @@ from homeassistant.const import (
     CONF_MONITORED_CONDITIONS,
     CONF_PORT,
     CONF_SSL,
+    DATA_BYTES,
+    DATA_EXABYTES,
+    DATA_GIGABYTES,
+    DATA_KILOBYTES,
+    DATA_MEGABYTES,
+    DATA_PETABYTES,
+    DATA_TERABYTES,
+    DATA_YOTTABYTES,
+    DATA_ZETTABYTES,
+    HTTP_OK,
 )
 import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.entity import Entity
@@ -29,12 +39,12 @@ DEFAULT_HOST = "localhost"
 DEFAULT_PORT = 7878
 DEFAULT_URLBASE = ""
 DEFAULT_DAYS = "1"
-DEFAULT_UNIT = "GB"
+DEFAULT_UNIT = DATA_GIGABYTES
 
 SCAN_INTERVAL = timedelta(minutes=10)
 
 SENSOR_TYPES = {
-    "diskspace": ["Disk Space", "GB", "mdi:harddisk"],
+    "diskspace": ["Disk Space", DATA_GIGABYTES, "mdi:harddisk"],
     "upcoming": ["Upcoming", "Movies", "mdi:television"],
     "wanted": ["Wanted", "Movies", "mdi:television"],
     "movies": ["Movies", "Movies", "mdi:television"],
@@ -51,7 +61,17 @@ ENDPOINTS = {
 }
 
 # Support to Yottabytes for the future, why not
-BYTE_SIZES = ["B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"]
+BYTE_SIZES = [
+    DATA_BYTES,
+    DATA_KILOBYTES,
+    DATA_MEGABYTES,
+    DATA_GIGABYTES,
+    DATA_TERABYTES,
+    DATA_PETABYTES,
+    DATA_EXABYTES,
+    DATA_ZETTABYTES,
+    DATA_YOTTABYTES,
+]
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
     {
         vol.Required(CONF_API_KEY): cv.string,
@@ -174,7 +194,7 @@ class RadarrSensor(Entity):
             self._state = None
             return
 
-        if res.status_code == 200:
+        if res.status_code == HTTP_OK:
             if self.type in ["upcoming", "movies", "commands"]:
                 self.data = res.json()
                 self._state = len(self.data)

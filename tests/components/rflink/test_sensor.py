@@ -12,7 +12,7 @@ from homeassistant.components.rflink import (
     EVENT_KEY_SENSOR,
     TMP_ENTITY,
 )
-from homeassistant.const import STATE_UNKNOWN
+from homeassistant.const import STATE_UNKNOWN, UNIT_PERCENTAGE
 
 from tests.components.rflink.test_init import mock_rflink
 
@@ -141,7 +141,12 @@ async def test_aliases(hass, monkeypatch):
 
     # test event for config sensor
     event_callback(
-        {"id": "test_alias_02_0", "sensor": "humidity", "value": 65, "unit": "%"}
+        {
+            "id": "test_alias_02_0",
+            "sensor": "humidity",
+            "value": 65,
+            "unit": UNIT_PERCENTAGE,
+        }
     )
     await hass.async_block_till_done()
 
@@ -149,7 +154,7 @@ async def test_aliases(hass, monkeypatch):
     updated_sensor = hass.states.get("sensor.test_02")
     assert updated_sensor
     assert updated_sensor.state == "65"
-    assert updated_sensor.attributes["unit_of_measurement"] == "%"
+    assert updated_sensor.attributes["unit_of_measurement"] == UNIT_PERCENTAGE
 
 
 async def test_race_condition(hass, monkeypatch):
@@ -176,7 +181,7 @@ async def test_race_condition(hass, monkeypatch):
     assert updated_sensor
 
     # test  state of new sensor
-    new_sensor = hass.states.get(DOMAIN + ".test3")
+    new_sensor = hass.states.get(f"{DOMAIN}.test3")
     assert new_sensor
     assert new_sensor.state == "ok"
 
@@ -186,6 +191,6 @@ async def test_race_condition(hass, monkeypatch):
     assert tmp_entity not in hass.data[DATA_ENTITY_LOOKUP][EVENT_KEY_SENSOR]["test3"]
 
     # test  state of new sensor
-    new_sensor = hass.states.get(DOMAIN + ".test3")
+    new_sensor = hass.states.get(f"{DOMAIN}.test3")
     assert new_sensor
     assert new_sensor.state == "ko"

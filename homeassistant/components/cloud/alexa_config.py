@@ -79,6 +79,12 @@ class AlexaConfig(alexa_config.AbstractConfig):
         return self._endpoint
 
     @property
+    def locale(self):
+        """Return config locale."""
+        # Not clear how to determine locale atm.
+        return "en-US"
+
+    @property
     def entity_config(self):
         """Return entity config."""
         return self._config.get(CONF_ENTITY_CONFIG) or {}
@@ -113,9 +119,9 @@ class AlexaConfig(alexa_config.AbstractConfig):
                 if self.should_report_state:
                     await self._prefs.async_update(alexa_report_state=False)
                     self.hass.components.persistent_notification.async_create(
-                        "There was an error reporting state to Alexa ({}). "
+                        f"There was an error reporting state to Alexa ({body['reason']}). "
                         "Please re-link your Alexa skill via the Alexa app to "
-                        "continue using it.".format(body["reason"]),
+                        "continue using it.",
                         "Alexa state reporting disabled",
                         "cloud_alexa_report",
                     )

@@ -16,11 +16,6 @@ from .const import DOMAIN
 _LOGGER = logging.getLogger(__name__)
 
 
-async def async_setup_platform(hass, config, async_add_entities, discovery_info=None):
-    """Set up Velbus binary sensors."""
-    pass
-
-
 async def async_setup_entry(hass, entry, async_add_entities):
     """Set up Velbus binary sensor based on config_entry."""
     cntrl = hass.data[DOMAIN][entry.entry_id]["cntrl"]
@@ -87,4 +82,3 @@ class VelbusClimate(VelbusEntity, ClimateDevice):
 
     def set_hvac_mode(self, hvac_mode):
         """Set new target hvac mode."""
-        pass

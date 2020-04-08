@@ -39,6 +39,7 @@ from homeassistant.const import (
     ATTR_ENTITY_ID,
     ATTR_MODE,
     ENTITY_MATCH_ALL,
+    ENTITY_MATCH_NONE,
     EVENT_HOMEASSISTANT_STOP,
 )
 from homeassistant.core import callback
@@ -374,6 +375,9 @@ class LIFXManager:
 
     async def async_service_to_entities(self, service):
         """Return the known entities that a service call mentions."""
+        if service.data.get(ATTR_ENTITY_ID) == ENTITY_MATCH_NONE:
+            return []
+
         if service.data.get(ATTR_ENTITY_ID) == ENTITY_MATCH_ALL:
             return self.entities.values()
 
@@ -431,7 +435,7 @@ class LIFXManager:
             entity = self.entities[bulb.mac_addr]
             _LOGGER.debug("%s unregister", entity.who)
             entity.registered = False
-            self.hass.async_create_task(entity.async_update_ha_state())
+            entity.async_write_ha_state()
 
 
 class AwaitAioLIFX:
@@ -569,7 +573,7 @@ class LIFXLight(Light):
         """Request new status and push it to hass."""
         self.postponed_update = None
         await self.async_update()
-        await self.async_update_ha_state()
+        self.async_write_ha_state()
 
     async def update_during_transition(self, when):
         """Update state at the start and end of a transition."""

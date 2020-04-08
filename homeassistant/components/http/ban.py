@@ -96,9 +96,7 @@ async def process_wrong_login(request):
     """
     remote_addr = request[KEY_REAL_IP]
 
-    msg = "Login attempt or request with invalid authentication from {}".format(
-        remote_addr
-    )
+    msg = f"Login attempt or request with invalid authentication from {remote_addr}"
     _LOGGER.warning(msg)
 
     hass = request.app["hass"]
@@ -111,6 +109,12 @@ async def process_wrong_login(request):
         return
 
     request.app[KEY_FAILED_LOGIN_ATTEMPTS][remote_addr] += 1
+
+    # Supervisor IP should never be banned
+    if "hassio" in hass.config.components and hass.components.hassio.get_supervisor_ip() == str(
+        remote_addr
+    ):
+        return
 
     if (
         request.app[KEY_FAILED_LOGIN_ATTEMPTS][remote_addr]
