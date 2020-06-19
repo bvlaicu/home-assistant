@@ -1,7 +1,7 @@
 {
   "config": {
     "abort": {
-      "already_setup": "TelldusLive is already configured",
+      "already_configured": "TelldusLive is already configured",
       "authorize_url_fail": "Unknown error generating an authorize url.",
       "authorize_url_timeout": "Timeout generating authorize url.",
       "unknown": "Unknown error occurred"
@@ -16,11 +16,10 @@
       },
       "user": {
         "data": {
-          "host": "Host"
+          "host": "[%key:common::config_flow::data::host%]"
         },
         "title": "Pick endpoint."
       }
-    },
-    "title": "Telldus Live"
+    }
   }
 }

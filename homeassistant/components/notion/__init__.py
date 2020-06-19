@@ -7,7 +7,12 @@ from aionotion.errors import InvalidCredentialsError, NotionError
 import voluptuous as vol
 
 from homeassistant.config_entries import SOURCE_IMPORT
-from homeassistant.const import ATTR_ATTRIBUTION, CONF_PASSWORD, CONF_USERNAME
+from homeassistant.const import (
+    ATTR_ATTRIBUTION,
+    CONF_PASSWORD,
+    CONF_USERNAME,
+    TEMP_CELSIUS,
+)
 from homeassistant.core import callback
 from homeassistant.exceptions import ConfigEntryNotReady
 from homeassistant.helpers import (
@@ -57,7 +62,7 @@ BINARY_SENSOR_TYPES = {
     SENSOR_WINDOW_HINGED_HORIZONTAL: ("Hinged Window", "window"),
     SENSOR_WINDOW_HINGED_VERTICAL: ("Hinged Window", "window"),
 }
-SENSOR_TYPES = {SENSOR_TEMPERATURE: ("Temperature", "temperature", "°C")}
+SENSOR_TYPES = {SENSOR_TEMPERATURE: ("Temperature", "temperature", TEMP_CELSIUS)}
 
 CONFIG_SCHEMA = vol.Schema(
     {
@@ -191,7 +196,14 @@ class Notion:
         results = await asyncio.gather(*tasks.values(), return_exceptions=True)
         for attr, result in zip(tasks, results):
             if isinstance(result, NotionError):
-                _LOGGER.error("There was an error while updating %s: %s", attr, result)
+                _LOGGER.error(
+                    "There was a Notion error while updating %s: %s", attr, result
+                )
+                continue
+            if isinstance(result, Exception):
+                _LOGGER.error(
+                    "There was an unknown error while updating %s: %s", attr, result
+                )
                 continue
 
             holding_pen = getattr(self, attr)
@@ -290,7 +302,9 @@ class NotionEntity(Entity):
         bridge_device = device_registry.async_get_device(
             {DOMAIN: bridge["hardware_id"]}, set()
         )
-        this_device = device_registry.async_get_device({DOMAIN: sensor["hardware_id"]})
+        this_device = device_registry.async_get_device(
+            {DOMAIN: sensor["hardware_id"]}, set()
+        )
 
         device_registry.async_update_device(
             this_device.id, via_device_id=bridge_device.id

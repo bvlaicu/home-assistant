@@ -1,14 +1,13 @@
 {
   "config": {
-    "title": "Network UPS Tools (NUT)",
     "step": {
       "user": {
         "title": "Connect to the NUT server",
         "data": {
-          "host": "Host",
-          "port": "Port",
-          "username": "Username",
-          "password": "Password"
+          "host": "[%key:common::config_flow::data::host%]",
+          "port": "[%key:common::config_flow::data::port%]",
+          "username": "[%key:common::config_flow::data::username%]",
+          "password": "[%key:common::config_flow::data::password%]"
         }
       },
       "ups": {
@@ -38,7 +37,8 @@
       "init": {
         "description": "Choose Sensor Resources.",
         "data": {
-          "resources": "Resources"
+          "resources": "Resources",
+          "scan_interval": "Scan Interval (seconds)"
         }
       }
     }
